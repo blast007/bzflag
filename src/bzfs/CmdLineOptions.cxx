@@ -1488,8 +1488,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
         {
             checkArgc(1, i, argc, argv[i]);
             int sides = atoi(argv[i]);
-            if (sides > 2)
+            if (sides > 2 && sides <= 64)
                 options.wallSides = sides;
+            else
+            {
+                std::cerr << "ERROR: -ws must use a value between 3 and 64" << std::endl;
+                usage(argv[0]);
+            }
+
         }
         else
         {

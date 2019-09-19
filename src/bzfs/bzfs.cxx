@@ -1043,34 +1043,48 @@ void makeWalls ( void )
         wallHeight = pluginWorldHeight;
 
     double halfSize = worldSize * 0.5;
-    double angleDelta = 360.0 / clOptions->wallSides;
-    double startAngle = -angleDelta*0.5;
-    double radius = sqrt(halfSize*halfSize + halfSize*halfSize);
 
-    float degToRad = (float)(M_PI/180.0);
-
-    double segmentLen = (sin(angleDelta*0.5*(degToRad)) * radius)*2;
-
-    if (0)
+    if (clOptions->wallSides != 4)
     {
-        for ( int w = 0; w < clOptions->wallSides; w++ )
+        double radius = halfSize * (1 / cos(M_PI / clOptions->wallSides));
+        double centerAngle = 2.0 * M_PI / clOptions->wallSides;
+        double startAngle;
+        if (clOptions->wallSides % 2 == 0)
+            startAngle = M_PI / 2.0 - (centerAngle / 2);
+        else
+            startAngle = M_PI / 2;
+
+        double firstVertice[2] = { 0.0, 0.0 };
+        double lastVertice[2] = { 0.0, 0.0 };
+
+        for (int w = 0; w < clOptions->wallSides; w++)
         {
-            float midpointRad = sqrtf((float)radius*(float)radius-((float)segmentLen*0.5f)*((float)segmentLen*0.5f));
-            float midpointAngle = (float)startAngle + ((float)angleDelta*0.5f) + ((float)angleDelta*w);
+            double angle = startAngle + (w * centerAngle);
+            double vertice[2] = { radius * cos(angle), radius * sin(angle) };
 
-            float x = sinf(midpointAngle*degToRad)*midpointRad;
-            float y = cosf(midpointAngle*degToRad)*midpointRad;
-
-            world->addWall(x, y, 0.0f, (270.0f-midpointAngle)*degToRad, (float)segmentLen, wallHeight);
-
+            // Store the first vertice for later
+            if (w == 0)
+            {
+                firstVertice[0] = lastVertice[0] = vertice[0];
+                firstVertice[1] = lastVertice[1] = vertice[1];
+            }
+            else
+            {
+                world->addWall((float)lastVertice[0], (float)lastVertice[1], (float)vertice[0], (float)vertice[1], wallHeight);
+                lastVertice[0] = vertice[0];
+                lastVertice[1] = vertice[1];
+            }
         }
+        world->addWall((float)lastVertice[0], (float)lastVertice[1], (float)firstVertice[0], (float)firstVertice[1],
+                       wallHeight);
     }
+    // It may be unnecessary to handle the 4-sided worlds this way as the above code could work for them as well
     else
     {
-        world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-        world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-        world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-        world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+        world->addWall((float)halfSize, (float)-halfSize, (float)halfSize, (float)halfSize, wallHeight); // 0
+        world->addWall((float)halfSize, (float)halfSize, (float)-halfSize, (float)halfSize, wallHeight); // 90
+        world->addWall((float)-halfSize, (float)halfSize, (float)-halfSize, (float)-halfSize, wallHeight); // 180
+        world->addWall((float)-halfSize, (float)-halfSize, (float)halfSize, (float)-halfSize, wallHeight); // 270
     }
 }
 

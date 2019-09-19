@@ -77,10 +77,23 @@ WorldInfo::~WorldInfo()
 }
 
 
-void WorldInfo::addWall(float x, float y, float z, float r, float w, float h)
+void WorldInfo::addWall(float x1, float y1, float x2, float y2, float h, bool ricochet)
 {
-    const float pos[3] = {x, y, z};
-    WallObstacle* wall = new WallObstacle(pos, r, w, h, false);
+    // Determine half wall width
+    const float w = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)) / 2.0f;
+
+    // Determine wall angle (in radians)
+    const float r = atan2(y2 - y1, x2 - x1) + (float)M_PI / 2.0f;
+
+    // Determine mid point
+    const float pos[3] =
+    {
+        (x1 + x2) * 0.5f,
+        (y1 + y2) * 0.5f,
+        0.0f
+    };
+
+    WallObstacle* wall = new WallObstacle(pos, r, w, h, ricochet);
     OBSTACLEMGR.addWorldObstacle(wall);
 }
 

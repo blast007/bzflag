@@ -72,7 +72,7 @@ public:
     void setSize ( float x, float y );
     void setGravity ( float g );
 
-    void addWall(float x, float y, float z, float r, float w, float h);
+    void addWall(float x1, float y1, float x2, float y2, float h, bool ricochet = false);
     void addLink(int from, int to);
     void addLink(const std::string& from, const std::string& to);
 

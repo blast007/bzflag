@@ -98,16 +98,32 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
         {
             if (!world->getPlayerSpawnPoint(&pi, testPos))
             {
-                if (notNearEdges)
+                if (clOptions->wallSides == 4)
                 {
-                    // don't spawn close to map edges in CTF mode
-                    testPos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
-                    testPos[1] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+                    if (notNearEdges)
+                    {
+                        // don't spawn close to map edges in CTF mode
+                        testPos[0] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+                        testPos[1] = ((float)bzfrand() - 0.5f) * size * 0.6f;
+                    }
+                    else
+                    {
+                        testPos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+                        testPos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+                    }
                 }
+                // Cheesy circular radius spawn location
                 else
                 {
-                    testPos[0] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-                    testPos[1] = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+                    float angle = 2.0f * (float)bzfrand() * (float)M_PI;
+                    float distance;
+                    if (notNearEdges)
+                        distance = ((float)bzfrand() - 0.5f) * size * 0.6f;
+                    else
+                        distance = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+
+                    testPos[0] = distance * sin(angle);
+                    testPos[1] = distance * cos(angle);
                 }
                 testPos[2] = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
             }
