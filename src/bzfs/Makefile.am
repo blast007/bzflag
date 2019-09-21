@@ -76,6 +76,10 @@ bzfs_SOURCES =				\
 	CustomWeapon.h			\
 	CustomWorld.cxx			\
 	CustomWorld.h			\
+	CustomWorldBoundry.cxx			\
+	CustomWorldBoundry.h			\
+	CustomWorldBoundryWall.cxx			\
+	CustomWorldBoundryWall.h			\
 	CustomZone.cxx			\
 	CustomZone.h			\
 	DropGeometry.cxx		\

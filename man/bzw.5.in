@@ -122,6 +122,8 @@ world types consists of:
 .br
 .B weapon
 .br
+.B worldBoundry
+.br
 .B zone
 .br
 
@@ -843,6 +845,30 @@ An eventteam value of \-1 will trigger this weapon for any team. \-1 is the defa
 \fB  eventteam\fR V
 .br
 \fBend\fR
+.br
+
+
+.B The World Boundry object
+.br
+This defines the world boundry. Only a single world boundry may be defined in
+a map. Within this object, only a single convex wall is supported in BZFlag
+2.4.x.
+
+\fBworldBoundry\fR
+.br
+\fB  vertex\fR 100 200  # add a vertex (x and y coordinates) (\fBrepeatable\fR)
+.br
+\fB  wall\fR  # start a wall (\fBnot yet repeatable\fR)
+.br
+\fB    height\fR 6.15
+.br
+    # the vertices should wind counter-clockwise
+.br
+\fB    vertices\fR 1 4 0 3 5   # list of vertices (requires at least three)
+.br
+\fB  endwall\fR  # end the world boundry wall
+.br
+\fBend\fR        # worldBoundry
 .br
 
 

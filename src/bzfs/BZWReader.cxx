@@ -32,6 +32,7 @@
 #include "CustomBase.h"
 #include "CustomWeapon.h"
 #include "CustomWorld.h"
+#include "CustomWorldBoundry.h"
 #include "CustomZone.h"
 #include "CustomTetra.h"
 #include "CustomMesh.h"
@@ -56,7 +57,7 @@
 
 
 BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),
-    input(NULL)
+    input(NULL), hasCustomWalls(false)
 {
     static const std::string httpProtocol("http://");
     static const std::string ftpProtocol("ftp://");
@@ -205,6 +206,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     std::vector<std::string>  customLines;
 
     bool gotWorld = false;
+    hasCustomWalls = false;
 
     while (!input->eof() && !input->fail() && input->good())
     {
@@ -397,6 +399,20 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
             }
 
         }
+        else if (strcasecmp(buffer, "worldboundry") == 0)
+        {
+            if (!hasCustomWalls)
+            {
+                newObject = new CustomWorldBoundry();
+                hasCustomWalls = true;
+            }
+            else
+            {
+                errorHandler->warning(
+                    std::string("multiple \"worldBoundry\" sections found"), line);
+            }
+
+        }
         else if (object)
         {
             if (object != fakeObject)
@@ -495,7 +511,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
         return NULL;
     }
 
-    if (!BZDB.isTrue("noWalls"))
+    if (!BZDB.isTrue("noWalls") && !hasCustomWalls)
         makeWalls();
 
     // generate group instances

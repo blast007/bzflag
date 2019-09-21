@@ -57,6 +57,8 @@ private:
     BZWReader();
 
     std::string httpData;
+
+    bool hasCustomWalls;
 };
 
 #endif
