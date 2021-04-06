@@ -19,6 +19,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Install Dependencies
+      run: sudo apt install -y libsdl2-dev libcurl3-dev libc-ares-dev zlib1g-dev libncurses-dev libglew-dev
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
