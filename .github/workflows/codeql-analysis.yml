@@ -13,13 +13,41 @@ jobs:
   analyze:
     name: Analyze
     # CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
-    runs-on: ubuntu-latest
+    runs-on: windows-2016
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        path: bzflag
 
-    - name: Install Dependencies
+    # Checkout dependencies repository
+    - if: ${{ runner.os == 'Windows' }}
+      name: Checkout dependencies repository
+      uses: actions/checkout@v2
+      with:
+        repository: BZFlag-Dev/bzflag-dependencies
+        path: bzflag-dependencies
+
+    # Set environment variable for Windows
+    - if: ${{ runner.os == 'Windows' }}
+      name: Set environment variables
+      uses: allenevans/set-env@v2.0.0
+      with:
+        ROOT: '%cd%'
+        BZ_DEPS: '%cd%\bzflag\dependencies'
+
+    # Build dependencies on Windows
+    - if: ${{ runner.os == 'Windows' }}
+      name: Build Windows dependencies
+      run: |
+        cd %ROOT%\bzflag-dependencies
+        buildVS2017.bat
+        cd %ROOT%\bzflag
+
+    # Install dependencies on Linux
+    - if: ${{ runner.os == 'Linux' }}
+      name: Install Linux Dependencies
       run: |
         sudo apt update
         sudo apt install -y libsdl2-dev libcurl3-dev libc-ares-dev zlib1g-dev libncurses-dev libglew-dev
