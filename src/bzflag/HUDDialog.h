@@ -16,12 +16,24 @@
 /* common */
 #include "common.h"
 
+#include "HUDuiLabel.h"
+
 /* system headers */
+#include <string>
 #include <vector>
 
 /* local interface headers */
 class HUDuiControl;
 class HUDuiDefaultKey;
+
+enum HUDDialogLayout {
+    // Used for main menu and help pages
+    HUDDialogSingleColumn,
+    // Used for most other menus
+    HUDDialogDoubleColumn,
+    // For special layouts, such as the video resolution and key mapping menus
+    HUDDialogCustom
+};
 
 /**
  * HUDDialog:
@@ -30,7 +42,7 @@ class HUDuiDefaultKey;
 class HUDDialog
 {
 public:
-    HUDDialog();
+    HUDDialog(std::string title, HUDDialogLayout layout = HUDDialogDoubleColumn);
     virtual     ~HUDDialog();
 
     void            render();
@@ -47,8 +59,11 @@ public:
 
     HUDuiControl*       getFocus() const;
     void            setFocus(HUDuiControl*);
+    void            setSubtitle(std::string string1, std::string string2 = "");
 
     void            initNavigation(std::vector<HUDuiControl*> &list, int start, int end);
+
+    HUDuiLabel*     createLabel(const std::string &string, const std::string &label = "");
 
 
 
@@ -72,7 +87,9 @@ protected:
     }
 
 protected:
-    int             height, width;
+    int             height, width, menuFont;
+    bool            hasSubtitle;
+    HUDDialogLayout layout;
 
 private:
     std::vector<HUDuiControl*>  list;

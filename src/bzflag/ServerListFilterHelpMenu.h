@@ -57,7 +57,6 @@ public:
     static void done();
 
 protected:
-    HUDuiControl* createLabel(const char* string, const char* label = NULL);
     HUDuiControl* createInput(const std::string &);
     virtual float getLeftSide(int width, int height);
 

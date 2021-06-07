@@ -55,26 +55,12 @@ bool HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 
-HelpMenu::HelpMenu(const char* title) : HUDDialog()
+HelpMenu::HelpMenu(const char* title, HUDDialogLayout _layout) : HUDDialog(title, _layout)
 {
-    // add controls
+    setSubtitle("Page Down for next page", "Page Up for previous page");
+
     std::vector<HUDuiControl*>& listHUD = getControls();
-    listHUD.push_back(createLabel(title));
-    listHUD.push_back(createLabel("Page Down for next page",
-                                  "Page Up for previous page"));
-
-
     initNavigation(listHUD, 1, 1);
-}
-
-HUDuiControl* HelpMenu::createLabel(const char* string,
-                                    const char* label)
-{
-    HUDuiLabel* control = new HUDuiLabel;
-    control->setFontFace(MainMenu::getFontFace());
-    if (string) control->setString(string);
-    if (label) control->setLabel(label);
-    return control;
 }
 
 float HelpMenu::getLeftSide(int, int _height)
@@ -87,28 +73,28 @@ void HelpMenu::resize(int _width, int _height)
     HUDDialog::resize(_width, _height);
 
     // use a big font for title, smaller font for the rest
-    const float titleFontSize = (float)_height / 23.0f;
-    const float fontSize = (float)_height / 100.0f;
-    FontManager &fm = FontManager::instance();
+    //const float titleFontSize = (float)_height / 23.0f;
+    //const float fontSize = (float)_height / 100.0f;
+    //FontManager &fm = FontManager::instance();
 
     // reposition title
-    std::vector<HUDuiControl*>& listHUD = getControls();
-    HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+    //std::vector<HUDuiControl*>& listHUD = getControls();
+    /*HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
-    title->setPosition(x, y);
+    title->setPosition(x, y);*/
 
     // position focus holder off screen
-    listHUD[1]->setFontSize(fontSize);
-    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-    y -= 1.25f * h;
-    listHUD[1]->setPosition(0.5f * ((float)_width + h), y);
+    //listHUD[1]->setFontSize(fontSize);
+    //const float h = fm.getStrHeight(menuFont, fontSize, " ");
+    //y -= 1.25f * h;
+    //listHUD[1]->setPosition(0.5f * ((float)_width + h), y);
 
     // reposition options
-    x = getLeftSide(_width, _height);
+    /*x = getLeftSide(_width, _height);
     y -= 1.5f * h;
     const int count = listHUD.size();
     for (int i = 2; i < count; i++)
@@ -116,7 +102,7 @@ void HelpMenu::resize(int _width, int _height)
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
         y -= 1.0f * h;
-    }
+    }*/
 }
 
 //
@@ -155,41 +141,41 @@ Help1Menu::Help1Menu() : HelpMenu("Controls")
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
     listHUD.push_back(createLabel("Mouse Position", "Controls Tank Position:"));
-    listHUD.push_back(createLabel(NULL, "Fires Shot:"));
-    listHUD.push_back(createLabel(NULL, "Drops Flag (if not bad):"));
-    listHUD.push_back(createLabel(NULL, "Identifies Player (locks on GM):"));
-    listHUD.push_back(createLabel(NULL, "Short Radar Range:"));
-    listHUD.push_back(createLabel(NULL, "Medium Radar Range:"));
-    listHUD.push_back(createLabel(NULL, "Long Radar Range:"));
-    listHUD.push_back(createLabel(NULL, "Zoom Radar In:"));
-    listHUD.push_back(createLabel(NULL, "Zoom Radar Out:"));
-    listHUD.push_back(createLabel(NULL, "Send Message to Everybody:"));
-    listHUD.push_back(createLabel(NULL, "Send Message to Teammates:"));
-    listHUD.push_back(createLabel(NULL, "Send Message to Nemesis:"));
-    listHUD.push_back(createLabel(NULL, "Send Message to Recipient:"));
-    listHUD.push_back(createLabel(NULL, "Jump (if allowed):"));
-    listHUD.push_back(createLabel(NULL, "Toggle Binoculars:"));
-    listHUD.push_back(createLabel(NULL, "Toggle Score Sheet:"));
-    listHUD.push_back(createLabel(NULL, "Toggle Tank Labels:"));
-    listHUD.push_back(createLabel(NULL, "Toggle Heads-up Flag Help:"));
-    listHUD.push_back(createLabel(NULL, "Set Time of Day Backward:"));
-    listHUD.push_back(createLabel(NULL, "Set Time of Day Forward:"));
-    listHUD.push_back(createLabel(NULL, "Pause/Resume:"));
-    listHUD.push_back(createLabel(NULL, "Self destruct/Cancel:"));
-    listHUD.push_back(createLabel(NULL, "Quit:"));
-    listHUD.push_back(createLabel(NULL, "Scroll Message Log Backward:"));
-    listHUD.push_back(createLabel(NULL, "Scroll Message Log Forward:"));
-    listHUD.push_back(createLabel(NULL, "Slow Keyboard Motion:"));
-    listHUD.push_back(createLabel(NULL, "Toggle Radar Flags:"));
-    listHUD.push_back(createLabel(NULL, "Toggle Main Flags:"));
-    listHUD.push_back(createLabel(NULL, "Silence/UnSilence:"));
-    listHUD.push_back(createLabel(NULL, "Server Admin:"));
-    listHUD.push_back(createLabel(NULL, "Hunt:"));
-    listHUD.push_back(createLabel(NULL, "Auto Pilot:"));
-    listHUD.push_back(createLabel(NULL, "Main Message Tab:"));
-    listHUD.push_back(createLabel(NULL, "Chat Message Tab:"));
-    listHUD.push_back(createLabel(NULL, "Server Message Tab:"));
-    listHUD.push_back(createLabel(NULL, "Misc Message Tab:"));
+    listHUD.push_back(createLabel("", "Fires Shot:"));
+    listHUD.push_back(createLabel("", "Drops Flag (if not bad):"));
+    listHUD.push_back(createLabel("", "Identifies Player (locks on GM):"));
+    listHUD.push_back(createLabel("", "Short Radar Range:"));
+    listHUD.push_back(createLabel("", "Medium Radar Range:"));
+    listHUD.push_back(createLabel("", "Long Radar Range:"));
+    listHUD.push_back(createLabel("", "Zoom Radar In:"));
+    listHUD.push_back(createLabel("", "Zoom Radar Out:"));
+    listHUD.push_back(createLabel("", "Send Message to Everybody:"));
+    listHUD.push_back(createLabel("", "Send Message to Teammates:"));
+    listHUD.push_back(createLabel("", "Send Message to Nemesis:"));
+    listHUD.push_back(createLabel("", "Send Message to Recipient:"));
+    listHUD.push_back(createLabel("", "Jump (if allowed):"));
+    listHUD.push_back(createLabel("", "Toggle Binoculars:"));
+    listHUD.push_back(createLabel("", "Toggle Score Sheet:"));
+    listHUD.push_back(createLabel("", "Toggle Tank Labels:"));
+    listHUD.push_back(createLabel("", "Toggle Heads-up Flag Help:"));
+    listHUD.push_back(createLabel("", "Set Time of Day Backward:"));
+    listHUD.push_back(createLabel("", "Set Time of Day Forward:"));
+    listHUD.push_back(createLabel("", "Pause/Resume:"));
+    listHUD.push_back(createLabel("", "Self destruct/Cancel:"));
+    listHUD.push_back(createLabel("", "Quit:"));
+    listHUD.push_back(createLabel("", "Scroll Message Log Backward:"));
+    listHUD.push_back(createLabel("", "Scroll Message Log Forward:"));
+    listHUD.push_back(createLabel("", "Slow Keyboard Motion:"));
+    listHUD.push_back(createLabel("", "Toggle Radar Flags:"));
+    listHUD.push_back(createLabel("", "Toggle Main Flags:"));
+    listHUD.push_back(createLabel("", "Silence/UnSilence:"));
+    listHUD.push_back(createLabel("", "Server Admin:"));
+    listHUD.push_back(createLabel("", "Hunt:"));
+    listHUD.push_back(createLabel("", "Auto Pilot:"));
+    listHUD.push_back(createLabel("", "Main Message Tab:"));
+    listHUD.push_back(createLabel("", "Chat Message Tab:"));
+    listHUD.push_back(createLabel("", "Server Message Tab:"));
+    listHUD.push_back(createLabel("", "Misc Message Tab:"));
     listHUD.push_back(createLabel("Esc", "Show/Dismiss menu:"));
 
     initKeymap("fire", 3);
@@ -303,7 +289,7 @@ public:
     ~Help2Menu() {}
 };
 
-Help2Menu::Help2Menu() : HelpMenu("General")
+Help2Menu::Help2Menu() : HelpMenu("General", HUDDialogSingleColumn)
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -341,7 +327,7 @@ public:
     ~Help3Menu() {}
 };
 
-Help3Menu::Help3Menu() : HelpMenu("Environment")
+Help3Menu::Help3Menu() : HelpMenu("Environment", HUDDialogSingleColumn)
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -375,7 +361,7 @@ public:
     ~Help4Menu() {}
 };
 
-Help4Menu::Help4Menu() : HelpMenu("Flags")
+Help4Menu::Help4Menu() : HelpMenu("Flags", HUDDialogSingleColumn)
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -484,7 +470,7 @@ public:
     ~Help7Menu() {}
 };
 
-Help7Menu::Help7Menu() : HelpMenu("Readouts I")
+Help7Menu::Help7Menu() : HelpMenu("Readouts I", HUDDialogSingleColumn)
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -519,7 +505,7 @@ public:
     ~Help8Menu() {}
 };
 
-Help8Menu::Help8Menu() : HelpMenu("Readouts II")
+Help8Menu::Help8Menu() : HelpMenu("Readouts II", HUDDialogSingleColumn)
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();

@@ -28,54 +28,50 @@
 #include "ConfigFileManager.h"
 #include "clientConfig.h"
 
-OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
+OptionsMenu::OptionsMenu() : HUDDialog("Options"), guiOptionsMenu(NULL), effectsMenu(NULL),
     cacheMenu(NULL), saveWorldMenu(NULL),
     inputMenu(NULL),
     displayMenu(NULL)
 {
-    // cache font face ID
-    int fontFace = MainMenu::getFontFace();
-
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiList* option;
     std::vector<std::string>* options;
 
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setString("Options");
-    listHUD.push_back(label);
+    HUDuiLabel* label;
 
     inputSetting = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Input Settings");
     listHUD.push_back(label);
 
     displaySetting = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Display Settings");
     listHUD.push_back(label);
 
     effectsOptions = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Effects Settings");
     listHUD.push_back(label);
 
     guiOptions = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("GUI Settings");
     listHUD.push_back(label);
 
     cacheOptions = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Cache Settings");
+    label->setPaddingAfter(true);
     listHUD.push_back(label);
 
     // set locale
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Locale:");
     option->setCallback(callback, "L");
+    option->setPaddingAfter(true);
     options = &option->getList();
     std::vector<std::string> locales;
     if (BundleMgr::getLocaleList(&locales) == true)
@@ -105,7 +101,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 
     // Sound Volume
     option = new HUDuiList;
-    option->setFontFace(MainMenu::getFontFace());
+    option->setFontFace(menuFont);
     option->setLabel("Sound Volume:");
     option->setCallback(callback, "s");
     options = &option->getList();
@@ -121,9 +117,10 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
 
     // Remotes Sounds
     option = new HUDuiList;
-    option->setFontFace(MainMenu::getFontFace());
+    option->setFontFace(menuFont);
     option->setLabel("Remote Sounds:");
     option->setCallback(callback, "r");
+    option->setPaddingAfter(true);
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
@@ -131,7 +128,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Save Settings On Exit:");
     option->setCallback(callback, "S");
     options = &option->getList();
@@ -141,7 +138,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Save identity:");
     option->setCallback(callback, "i");
     options = &option->getList();
@@ -152,12 +149,13 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
     listHUD.push_back(option);
 
     save = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Save Settings");
+    label->setPaddingAfter(true);
     listHUD.push_back(save);
 
     saveWorld = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Save World");
     listHUD.push_back(label);
 
@@ -220,44 +218,11 @@ void OptionsMenu::execute()
 
 void OptionsMenu::resize(int _width, int _height)
 {
-    int i;
     HUDDialog::resize(_width, _height);
 
-    // use a big font for title, smaller font for the rest
-    const float titleFontSize = (float)_height / 15.0f;
-    const float fontSize = (float)_height / 45.0f;
-    FontManager &fm = FontManager::instance();
-
-    // reposition title
-    std::vector<HUDuiControl*>& listHUD = getControls();
-    HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
-    title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
-    float x = 0.5f * ((float)_width - titleWidth);
-    float y = (float)_height - titleHeight;
-    title->setPosition(x, y);
-
-    // reposition options in two columns
-    x = 0.5f * (float)_width;
-    y -= 0.6f * titleHeight;
-    const int count = listHUD.size();
-    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-    for (i = 1; i < count; i++)
-    {
-        HUDuiControl *ctl = listHUD[i];
-        ctl->setFontSize(fontSize);
-        ctl->setPosition(x, y);
-        if (i == 5 || i == 6 || i == 8 || i == 11)
-            y -= 1.75f * h;
-        else
-            y -= 1.0f * h;
-    }
-
-
-
     // load current settings
-    i = 7;
+    std::vector<HUDuiControl*>& listHUD = getControls();
+    int i = 7;
 
     // sound
     ((HUDuiList*)listHUD[i++])->setIndex(getSoundVolume());

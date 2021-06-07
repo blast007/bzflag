@@ -196,8 +196,8 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 
-ServerMenu::ServerMenu()
-    : defaultKey(this)
+ServerMenu::ServerMenu() : HUDDialog("Servers"),
+      defaultKey(this)
     , selectedIndex(0)
     , serversFound(0)
     , realServersFound(0)
@@ -212,7 +212,6 @@ ServerMenu::ServerMenu()
         listFilter.print();
 
     // add controls
-    addLabel("Servers", "");
     addLabel("Players", "");
     addLabel("Rogue", "");
     addLabel("Red", "");
@@ -245,7 +244,7 @@ ServerMenu::ServerMenu()
 
     // find server
     search = new HUDuiTypeIn;
-    search->setFontFace(MainMenu::getFontFace());
+    search->setFontFace(menuFont);
     search->setMaxLength(42);
     search->setString(listFilter.getSource());
     search->setColorFunc(ServerListFilter::colorizeSearch);
@@ -254,12 +253,12 @@ ServerMenu::ServerMenu()
 
     // short key help
     help1 = new HUDuiLabel;
-    help1->setFontFace(MainMenu::getFontFace());
+    help1->setFontFace(menuFont);
     help1->setString("Press +/- to add/remove favorites, f to toggle favorites-only list,");
     getControls().push_back(help1);
 
     help2 = new HUDuiLabel;
-    help2->setFontFace(MainMenu::getFontFace());
+    help2->setFontFace(menuFont);
     help2->setString("1 to 9 for quick filters, 0 to clear, e to edit quick filters, ? for filter help");
     getControls().push_back(help2);
 
@@ -271,7 +270,7 @@ ServerMenu::ServerMenu()
 void ServerMenu::addLabel(const char* msg, const char* _label)
 {
     HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
+    label->setFontFace(menuFont);
     label->setString(msg);
     label->setLabel(_label);
     getControls().push_back(label);
@@ -855,7 +854,7 @@ void ServerMenu::resize(int _width, int _height)
     int i;
     const float y0 = y;
     float fontSize = (float)_height / 54.0f;
-    float fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    float fontHeight = fm.getStrHeight(menuFont, fontSize, " ");
     for (i = 1; i < NumReadouts - 2; i++)
     {
         if (i % 7 == 1)
@@ -875,7 +874,7 @@ void ServerMenu::resize(int _width, int _height)
     // reposition search status readout
     {
         fontSize = (float)_height / 36.0f;
-        float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+        float fontHt = fm.getStrHeight(menuFont, fontSize, " ");
         status->setFontSize(fontSize);
         const float statusWidth = fm.getStrLength(status->getFontFace(), fontSize, status->getString());
         x = 0.5f * ((float)_width - statusWidth);
@@ -886,7 +885,7 @@ void ServerMenu::resize(int _width, int _height)
     // reposition find server input
     {
         fontSize = (float)_height / 36.0f;
-        float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+        float fontHt = fm.getStrHeight(menuFont, fontSize, " ");
         search->setFontSize(fontSize);
         const float searchWidth = fm.getStrLength(search->getFontFace(), fontSize, search->getLabel());
         x = (0.1f * (float)_width) + searchWidth;
@@ -907,7 +906,7 @@ void ServerMenu::resize(int _width, int _height)
 
     // position page readout and server item list
     fontSize = (float)_height / 54.0f;
-    fontHeight = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    fontHeight = fm.getStrHeight(menuFont, fontSize, " ");
     x = 0.125f * (float)_width;
     const bool useIcons = BZDB.isTrue("listIcons");
     for (i = -1; i < NumItems; ++i)

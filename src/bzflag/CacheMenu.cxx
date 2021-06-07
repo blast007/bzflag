@@ -25,19 +25,11 @@
 #include "playing.h"
 #include "HUDui.h"
 
-CacheMenu::CacheMenu(): center()
+CacheMenu::CacheMenu(): HUDDialog("Cache Settings"), center()
 {
-    // cache font face ID
-    int fontFace = MainMenu::getFontFace();
-
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
-
-    // the menu label
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setString("Cache Settings");
-    listHUD.push_back(label);
+    HUDuiLabel* label;
 
     // the menu options
     HUDuiList* option;
@@ -46,7 +38,7 @@ CacheMenu::CacheMenu(): center()
 
     // Server List Cache Time
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Server List Cache:");
     option->setCallback(callback, "s");
     options = &option->getList();
@@ -65,14 +57,15 @@ CacheMenu::CacheMenu(): center()
 
     // Server List Cache Clear
     clearServerListCache = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Clear Server List Cache");
+    label->setPaddingAfter(true);
     listHUD.push_back(label);
 
 
     // Cache Size (MegaBytes)
     cacheSize = new HUDuiTypeIn;
-    cacheSize->setFontFace(MainMenu::getFontFace());
+    cacheSize->setFontFace(menuFont);
     cacheSize->setLabel("Cache Size (MB):");
     cacheSize->setMaxLength(4);
     cacheSize->setString(BZDB.get("maxCacheMB"));
@@ -80,14 +73,15 @@ CacheMenu::CacheMenu(): center()
 
     // Clear Download Cache
     clearDownloadCache = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Clear Download Cache");
+    label->setPaddingAfter(true);
     listHUD.push_back(label);
 
 
     // Automatic Downloads
     option = new HUDuiList;
-    option->setFontFace(MainMenu::getFontFace());
+    option->setFontFace(menuFont);
     option->setLabel("Automatic Downloads:");
     option->setCallback(callback, "d");
     options = &option->getList();
@@ -98,7 +92,7 @@ CacheMenu::CacheMenu(): center()
 
     // Connection Updates
     option = new HUDuiList;
-    option->setFontFace(MainMenu::getFontFace());
+    option->setFontFace(menuFont);
     option->setLabel("Connection Updates:");
     option->setCallback(callback, "u");
     options = &option->getList();
@@ -109,14 +103,15 @@ CacheMenu::CacheMenu(): center()
 
     // Update Download Cache
     updateDownloadCache = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setLabel("Update Downloads");
+    label->setPaddingAfter(true);
     listHUD.push_back(label);
 
 
     // Failed Message  (download status)
     failedMessage = new HUDuiLabel;
-    failedMessage->setFontFace(fontFace);
+    failedMessage->setFontFace(menuFont);
     failedMessage->setString("");
     listHUD.push_back(failedMessage);
 
@@ -180,7 +175,7 @@ void CacheMenu::setFailedMessage(const char* msg)
     failedMessage->setString(msg);
 
     FontManager &fm = FontManager::instance();
-    const float _width = fm.getStrLength(MainMenu::getFontFace(),
+    const float _width = fm.getStrLength(menuFont,
                                          failedMessage->getFontSize(), failedMessage->getString());
     failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
@@ -192,42 +187,10 @@ void CacheMenu::resize(int _width, int _height)
 
     center = 0.5f * (float)_width;
 
-    // use a big font for title, smaller font for the rest
-    const float titleFontSize = (float)_height / 15.0f;
-    const float fontSize = (float)_height / 45.0f;
-    FontManager &fm = FontManager::instance();
-
-    // reposition title
     std::vector<HUDuiControl*>& listHUD = getControls();
-    HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
-    title->setFontSize(titleFontSize);
-    const float titleWidth =
-        fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-    const float titleHeight =
-        fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
-    float x = 0.5f * ((float)_width - titleWidth);
-    float y = (float)_height - titleHeight;
-    title->setPosition(x, y);
-
-    // reposition options
-    x = 0.5f * (float)_width;
-    y -= 0.6f * titleHeight;
-    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-    const int count = listHUD.size();
-    int i;
-    for (i = 1; i < count; i++)
-    {
-        listHUD[i]->setFontSize(fontSize);
-        listHUD[i]->setPosition(x, y);
-        // Add extra space after Clear Server List Cache, Clear Download Cache, and before the download status label
-        if ((i == 2) || (i == 4) || (i == 7))
-            y -= 1.75f * h;
-        else
-            y -= 1.0f * h;
-    }
 
     // load current settings
-    i = 1;
+    int i = 1;
 
     // server cache age
     int index = 0;

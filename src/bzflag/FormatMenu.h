@@ -61,9 +61,6 @@ public:
     static const int  NumItems;
 
 private:
-    void          addLabel(const char* msg, const char* _label);
-
-private:
     FormatMenuDefaultKey  defaultKey;
     int           numFormats;
 

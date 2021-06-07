@@ -72,8 +72,6 @@ public:
 private:
     void        update();
 
-    HUDuiLabel*     createLabel(const char*, const char* = NULL);
-
     void        initkeymap(const std::string& name, int index);
 private:
     struct keymap

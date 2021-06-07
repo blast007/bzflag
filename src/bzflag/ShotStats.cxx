@@ -24,12 +24,9 @@
 #include "LocalPlayer.h"
 #include "Roster.h"
 
-ShotStats::ShotStats() : HUDDialog()
+ShotStats::ShotStats() : HUDDialog("Shot Statistics")
 {
     std::vector<HUDuiControl*>& listHUD = getControls();
-
-    // add title
-    createLabel("Shot Statistics", listHUD);
 
     // key
     createLabel("Shots Hit/Fired", listHUD);

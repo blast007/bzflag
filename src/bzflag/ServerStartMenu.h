@@ -48,7 +48,6 @@ public:
 
 private:
     HUDuiList* createList(const char*);
-    HUDuiLabel* createLabel(const char*);
     void setStatus(const char*, const std::vector<std::string> *parms = NULL);
     void loadSettings();
     void scanWorldFiles (const std::string& searchDir,

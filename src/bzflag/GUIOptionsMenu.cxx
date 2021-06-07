@@ -26,23 +26,15 @@
 #include "ScoreboardRenderer.h"
 #include "playing.h"
 
-GUIOptionsMenu::GUIOptionsMenu()
+GUIOptionsMenu::GUIOptionsMenu() : HUDDialog("GUI Settings")
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
 
-    // cache font face ID
-    int fontFace = MainMenu::getFontFace();
-
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setString("GUI Settings");
-    listHUD.push_back(label);
-
     HUDuiList* option;
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Scoreboard Font Size:");
     option->setCallback(callback, "S");
     std::vector<std::string>* options = &option->getList();
@@ -52,7 +44,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Scoreboard Sort:");
     option->setCallback(callback, "p");
     options = &option->getList();
@@ -64,17 +56,18 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // set motto display length
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Motto Display Length:");
     option->setCallback(callback, "E");
     option->createSlider(32 + 1);
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
 
     // set Radar Translucency
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Radar Opacity:");
     option->setCallback(callback, "Y");
     option->createSlider(11);
@@ -83,7 +76,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // set radar size
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Radar Size:");
     option->setCallback(callback, "R");
     option->createSlider(maxRadarSize + 1);
@@ -91,7 +84,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Radar Style:");
     option->setCallback(callback, "e");
     options = &option->getList();
@@ -104,7 +97,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // set radar shot size
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Radar Shot Size:");
     option->setCallback(callback, "s");
     option->createSlider(11);
@@ -113,7 +106,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // set radar shot length
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Radar Shot Length:");
     option->setCallback(callback, "l");
     option->createSlider(11);
@@ -122,7 +115,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // radar shot leading line
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Radar Shot Line:");
     option->setCallback(callback, "F");
     options = &option->getList();
@@ -134,7 +127,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // set radar position
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Radar Position:");
     option->setCallback(callback, "P");
     options = &option->getList();
@@ -145,20 +138,21 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // toggle coloring of shots on radar
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Colored shots on radar:");
     option->setCallback(callback, "z");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
 
 
     // set Panel Translucency
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Panel Opacity:");
     option->setCallback(callback, "y");
     option->createSlider(11);
@@ -167,7 +161,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // set panel size
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Panel Height:");
     option->setCallback(callback, "a");
     option->createSlider(maxRadarSize + 1);
@@ -175,7 +169,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("ControlPanel Font Size:");
     option->setCallback(callback, "C");
     options = &option->getList();
@@ -186,7 +180,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // Tabs
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Control panel tabs:");
     option->setCallback(callback, "t");
     options = &option->getList();
@@ -198,7 +192,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // Automatic pausing of the console
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Automatically pause the control panel:");
     option->setCallback(callback, "o");
     options = &option->getList();
@@ -209,7 +203,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // Time/date display settings
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Timestamps in console:");
     option->setCallback(callback, "Z");
     options = &option->getList();
@@ -221,7 +215,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // GUI coloring
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Control panel coloring:");
     option->setCallback(callback, "c");
     options = &option->getList();
@@ -232,7 +226,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // Underline color
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Underline color:");
     option->setCallback(callback, "u");
     options = &option->getList();
@@ -244,7 +238,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // Killer Highlight
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Killer Highlight:");
     option->setCallback(callback, "k");
     options = &option->getList();
@@ -256,7 +250,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // Pulsate Rate
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Pulsation Rate:");
     option->setCallback(callback, "r");
     option->createSlider(9);
@@ -265,18 +259,19 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // Pulsate Depth
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Pulsation Depth:");
     option->setCallback(callback, "d");
     option->createSlider(9);
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
 
 
     // Time/date display settings
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Time / Date Display:");
     option->setCallback(callback, "h");
     options = &option->getList();
@@ -288,7 +283,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // HUD Reload timer
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Reload timer on HUD:");
     option->setCallback(callback, "T");
     options = &option->getList();
@@ -298,7 +293,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Always Show Team Scores:");
     option->setCallback(callback, "q");
     options = &option->getList();
@@ -309,7 +304,7 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     // set observer info
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Extended Observer Info:");
     option->setCallback(callback, "O");
     options = &option->getList();
@@ -321,7 +316,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Show Coordinates:");
     option->setCallback(callback, "D");
     options = &option->getList();
@@ -345,36 +340,8 @@ void            GUIOptionsMenu::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
 
-    // use a big font for title, smaller font for the rest
-    const float titleFontSize = (float)_height / 15.0f;
-    const float fontSize = (float)_height / 70.0f;
-    FontManager &fm = FontManager::instance();
-
-    // reposition title
+    // Get controls
     std::vector<HUDuiControl*>& listHUD = getControls();
-    HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
-    title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
-    float x = 0.5f * ((float)_width - titleWidth);
-    float y = (float)_height - titleHeight;
-    title->setPosition(x, y);
-
-    // reposition options
-    x = 0.54f * (float)_width;
-    y -= 0.6f * titleHeight;
-    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-    const int count = listHUD.size();
-    for (int i = 1; i < count; i++)
-    {
-        listHUD[i]->setFontSize(fontSize);
-        listHUD[i]->setPosition(x, y);
-        // Add extra space after Motto Display Length, Colored shots on radar, and Pulsation Depth
-        if (i == 3 || i == 11 || i == 22)
-            y -= 1.75f * h;
-        else
-            y -= 1.0f * h;
-    }
 
     // load current settings
     SceneRenderer* renderer = getSceneRenderer();

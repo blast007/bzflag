@@ -22,24 +22,19 @@
 #include "MainMenu.h"
 
 
-SaveWorldMenu::SaveWorldMenu()
+SaveWorldMenu::SaveWorldMenu() : HUDDialog("Save World")
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
 
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
-    label->setString("Save World");
-    listHUD.push_back(label);
-
     filename = new HUDuiTypeIn;
-    filename->setFontFace(MainMenu::getFontFace());
+    filename->setFontFace(menuFont);
     filename->setLabel("File Name:");
     filename->setMaxLength(255);
     listHUD.push_back(filename);
 
     status = new HUDuiLabel;
-    status->setFontFace(MainMenu::getFontFace());
+    status->setFontFace(menuFont);
     status->setString("");
     status->setPosition(0.5f * (float)width, status->getY());
     listHUD.push_back(status);

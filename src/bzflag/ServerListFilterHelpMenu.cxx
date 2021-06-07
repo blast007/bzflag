@@ -57,11 +57,10 @@ bool ServerListFilterHelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 
-ServerListFilterHelpMenu::ServerListFilterHelpMenu(const char* title) : HUDDialog()
+ServerListFilterHelpMenu::ServerListFilterHelpMenu(const char* title) : HUDDialog(title)
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
-    listHUD.push_back(createLabel(title));
     listHUD.push_back(createLabel("Page Down for next page",
                                   "Page Up for previous page"));
 
@@ -69,20 +68,10 @@ ServerListFilterHelpMenu::ServerListFilterHelpMenu(const char* title) : HUDDialo
     initNavigation(listHUD, 1, 1);
 }
 
-HUDuiControl* ServerListFilterHelpMenu::createLabel(const char* string,
-        const char* label)
-{
-    HUDuiLabel* control = new HUDuiLabel;
-    control->setFontFace(MainMenu::getFontFace());
-    if (string) control->setString(string);
-    if (label) control->setLabel(label);
-    return control;
-}
-
 HUDuiControl* ServerListFilterHelpMenu::createInput(const std::string &label)
 {
     HUDuiTypeIn* entry = new HUDuiTypeIn;
-    entry->setFontFace(MainMenu::getFontFace());
+    entry->setFontFace(menuFont);
     entry->setLabel(label);
     entry->setMaxLength(42);
     entry->setColorFunc(ServerListFilter::colorizeSearch);
@@ -107,8 +96,8 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -131,7 +120,7 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
         // Minimize size of 1/100th of the screen height
         divisor < 100 &&
         // Try for fitting it to the available space
-        fm.getStrHeight(MainMenu::getFontFace(), maxFontSizeForHeight, " ") * (count - 2) > maxHelpHeight
+        fm.getStrHeight(menuFont, maxFontSizeForHeight, " ") * (count - 2) > maxHelpHeight
     );
 
     // Determine the maximum width we have to work with
@@ -139,11 +128,11 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
 
     // Find the longest line
     int longestLine = 2;
-    float longestLineWidth = fm.getStrLength(MainMenu::getFontFace(), maxFontSizeForHeight,
+    float longestLineWidth = fm.getStrLength(menuFont, maxFontSizeForHeight,
                              ((HUDuiLabel*)listHUD[1])->getString());
     for (int i = 2; i < count; i++)
     {
-        float lineWidth = fm.getStrLength(MainMenu::getFontFace(), maxFontSizeForHeight,
+        float lineWidth = fm.getStrLength(menuFont, maxFontSizeForHeight,
                                           ((HUDuiLabel*)listHUD[i])->getString());
         if (lineWidth > longestLineWidth)
         {
@@ -164,17 +153,17 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
     {
         divisor += 3;
         fontSize = (float)_height / divisor;
-        longestLineWidth = fm.getStrLength(MainMenu::getFontFace(), fontSize, ((HUDuiLabel*)listHUD[longestLine])->getString());
+        longestLineWidth = fm.getStrLength(menuFont, fontSize, ((HUDuiLabel*)listHUD[longestLine])->getString());
     }
 
     // position focus holder off screen
     listHUD[1]->setFontSize(navFontSize);
-    const float nh = fm.getStrHeight(MainMenu::getFontFace(), navFontSize, " ");
+    const float nh = fm.getStrHeight(menuFont, navFontSize, " ");
     y -= 1.25f * nh;
     listHUD[1]->setPosition(0.5f * ((float)_width + nh), y);
 
     // reposition options
-    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    const float h = fm.getStrHeight(menuFont, fontSize, " ");
     x = ((float)_width - longestLineWidth) / 2;
     y -= 1.5f * h;
 

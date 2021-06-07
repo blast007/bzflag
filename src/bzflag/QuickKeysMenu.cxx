@@ -23,13 +23,13 @@
 #include "MainMenu.h"
 
 
-QuickKeysMenu::QuickKeysMenu()
+QuickKeysMenu::QuickKeysMenu() : HUDDialog("Define Quick Keys")
 {
+    // Add subtitle
+    setSubtitle("Notice: depending on platform not all keys might work");
+
     // add controls
     std::vector<HUDuiControl*>& controls = getControls();
-
-    controls.push_back(createLabel("Define Quick Keys"));
-    controls.push_back(createLabel("Notice: depending on platform not all keys might work"));
 
     controls.push_back(createLabel("Send to All"));
     controls.push_back(createLabel("Send to Team"));
@@ -121,14 +121,13 @@ void QuickKeysMenu::resize(int _width, int _height)
     const float bigFontSize = (float)_height / 42.0f;
     const float fontSize = (float)_height / 48.0f;
     FontManager &fm = FontManager::instance();
-    const int fontFace = MainMenu::getFontFace();
 
     // reposition title
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -136,8 +135,8 @@ void QuickKeysMenu::resize(int _width, int _height)
     // reposition help
     HUDuiLabel*help = (HUDuiLabel*)listHUD[1];
     help->setFontSize(bigFontSize);
-    const float helpWidth = fm.getStrLength(fontFace, bigFontSize, help->getString());
-    const float bigHeight = fm.getStrHeight(fontFace, bigFontSize, " ");
+    const float helpWidth = fm.getStrLength(menuFont, bigFontSize, help->getString());
+    const float bigHeight = fm.getStrHeight(menuFont, bigFontSize, " ");
     x = 0.5f * ((float)_width - helpWidth);
     y -= 1.1f * bigHeight;
     help->setPosition(x, y);
@@ -159,7 +158,7 @@ void QuickKeysMenu::resize(int _width, int _height)
     const float topY = y - (0.6f * titleHeight);
     y = topY;
     listHUD[4]->setFontSize(fontSize);
-    const float h = fm.getStrHeight(fontFace, fontSize, " ");
+    const float h = fm.getStrHeight(menuFont, fontSize, " ");
     const int count = listHUD.size() - firstKeyControl;
     const int mid = (count / 2) + firstKeyControl;
 
@@ -180,19 +179,10 @@ void QuickKeysMenu::resize(int _width, int _height)
     }
 }
 
-HUDuiLabel* QuickKeysMenu::createLabel(const std::string &str)
-{
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
-    label->setString(str);
-    return label;
-}
-
-
 HUDuiTypeIn* QuickKeysMenu::createInput(const std::string &label)
 {
     HUDuiTypeIn* entry = new HUDuiTypeIn;
-    entry->setFontFace(MainMenu::getFontFace());
+    entry->setFontFace(menuFont);
     entry->setLabel(label);
     entry->setMaxLength(40); // some strings >20 won't already fit into column
     return entry;

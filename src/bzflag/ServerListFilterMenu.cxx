@@ -26,12 +26,10 @@
 #include "HUDui.h"
 #include "ServerListFilterHelpMenu.h"
 
-ServerListFilterMenu::ServerListFilterMenu()
+ServerListFilterMenu::ServerListFilterMenu() : HUDDialog("Server List Filters")
 {
     // add controls
     std::vector<HUDuiControl*>& controls = getControls();
-
-    controls.push_back(createLabel("Server List Filters"));
 
     firstKeyControl = controls.size();
 
@@ -121,14 +119,13 @@ void ServerListFilterMenu::resize(int _width, int _height)
     const float titleFontSize = (float)_height / 15.0f;
     const float fontSize = (float)_height / 45.0f;
     FontManager &fm = FontManager::instance();
-    int fontFace = MainMenu::getFontFace();
 
     // reposition title
     std::vector<HUDuiControl*>& controls = getControls();
     HUDuiLabel* title = (HUDuiLabel*)controls[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -138,7 +135,7 @@ void ServerListFilterMenu::resize(int _width, int _height)
                              controls[firstKeyControl]->getLabel());
     x = (0.1f * (float)_width) + labelWidth;
     y -= 0.6f * titleHeight;
-    const float h = fm.getStrHeight(fontFace, fontSize, " ");
+    const float h = fm.getStrHeight(menuFont, fontSize, " ");
     const int count = controls.size();
     for (i = 1; i < count; i++)
     {
@@ -151,19 +148,10 @@ void ServerListFilterMenu::resize(int _width, int _height)
     }
 }
 
-HUDuiLabel* ServerListFilterMenu::createLabel(const std::string &str)
-{
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
-    label->setString(str);
-    return label;
-}
-
-
 HUDuiTypeIn* ServerListFilterMenu::createInput(const std::string &label)
 {
     HUDuiTypeIn* entry = new HUDuiTypeIn;
-    entry->setFontFace(MainMenu::getFontFace());
+    entry->setFontFace(menuFont);
     entry->setLabel(label);
     entry->setMaxLength(42);
     entry->setColorFunc(ServerListFilter::colorizeSearch);

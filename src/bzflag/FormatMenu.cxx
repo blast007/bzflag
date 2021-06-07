@@ -88,8 +88,11 @@ bool FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
     return MenuDefaultKey::keyRelease(key);
 }
 
-FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
+FormatMenu::FormatMenu() : HUDDialog("Video Format", HUDDialogCustom), defaultKey(this), badFormats(NULL)
 {
+    // add controls
+    std::vector<HUDuiControl*>& listHUD = getControls();
+
     int i;
 
     BzfDisplay* display = getDisplay();
@@ -99,16 +102,21 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
         badFormats[i] = false;
 
     // add controls
-    addLabel("Video Format", "");
-    addLabel("", "");         // instructions
-    addLabel("", "Current Format:");  // current format readout
-    addLabel("", "");         // page readout
-    currentLabel = (HUDuiLabel*)(getControls()[NumReadouts - 2]);
-    pageLabel = (HUDuiLabel*)(getControls()[NumReadouts - 1]);
+    HUDuiLabel* label = createLabel("");
+    listHUD.push_back(label);
+
+    currentLabel = createLabel("", "Current Format:");
+    listHUD.push_back(currentLabel);
+
+    pageLabel = createLabel("");
+    listHUD.push_back(pageLabel);
 
     // add resolution list items
     for (i = 0; i < NumItems; ++i)
-        addLabel("", "");
+    {
+        label = createLabel("");
+        listHUD.push_back(label);
+    }
 
     // fill in static labels
     if (numFormats < 2)
@@ -118,7 +126,7 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
     }
     else
     {
-        HUDuiLabel* label = (HUDuiLabel*)(getControls()[NumReadouts - 3]);
+        label = (HUDuiLabel*)(getControls()[NumReadouts - 3]);
         label->setString("Press Enter to select and T to test a format. Esc to exit.");
         setFocus(pageLabel);
     }
@@ -127,15 +135,6 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
 FormatMenu::~FormatMenu()
 {
     delete[] badFormats;
-}
-
-void FormatMenu::addLabel(const char* msg, const char* _label)
-{
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
-    label->setString(msg);
-    label->setLabel(_label);
-    getControls().push_back(label);
 }
 
 int FormatMenu::getSelected() const
@@ -247,7 +246,6 @@ void FormatMenu::resize(int _width, int _height)
     // use a big font for title, smaller font for the rest
     const float titleFontSize = (float)_height / 15.0f;
     FontManager &fm = FontManager::instance();
-    int fontFace = MainMenu::getFontFace();
 
     // reposition title
     float x, y;
@@ -255,8 +253,8 @@ void FormatMenu::resize(int _width, int _height)
     {
         HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
         title->setFontSize(titleFontSize);
-        const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
-        const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
+        const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+        const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
         x = 0.5f * ((float)_width - titleWidth);
         y = (float)_height - titleHeight;
         title->setPosition(x, y);
@@ -267,15 +265,15 @@ void FormatMenu::resize(int _width, int _height)
     {
         HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
         label->setFontSize(fontSize);
-        const float stringWidth = fm.getStrLength(fontFace, fontSize, label->getString());
+        const float stringWidth = fm.getStrLength(menuFont, fontSize, label->getString());
         x = 0.5f * ((float)_width - stringWidth);
-        y -= 1.5f * fm.getStrHeight(fontFace, fontSize, " ");
+        y -= 1.5f * fm.getStrHeight(menuFont, fontSize, " ");
         label->setPosition(x, y);
     }
     {
         HUDuiLabel* label = currentLabel;
         label->setFontSize(fontSize);
-        y -= 1.0f * fm.getStrHeight(fontFace, fontSize, " ");
+        y -= 1.0f * fm.getStrHeight(menuFont, fontSize, " ");
         label->setPosition(0.5f * (float)_width, y);
     }
 
@@ -284,9 +282,9 @@ void FormatMenu::resize(int _width, int _height)
     {
         HUDuiLabel* label = pageLabel;
         label->setFontSize(fontSize);
-        const float stringWidth = fm.getStrLength(fontFace, fontSize, label->getString());
+        const float stringWidth = fm.getStrLength(menuFont, fontSize, label->getString());
         x = 0.5f * ((float)_width - stringWidth);
-        y -= 2.0f * fm.getStrHeight(fontFace, fontSize, " ");
+        y -= 2.0f * fm.getStrHeight(menuFont, fontSize, " ");
         label->setPosition(x, y);
     }
 
@@ -305,7 +303,7 @@ void FormatMenu::resize(int _width, int _height)
 
         HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
         label->setFontSize(fontSize);
-        y -= 1.0f * fm.getStrHeight(fontFace, fontSize, " ");
+        y -= 1.0f * fm.getStrHeight(menuFont, fontSize, " ");
         label->setPosition(x, y);
     }
 }

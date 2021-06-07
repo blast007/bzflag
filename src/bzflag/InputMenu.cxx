@@ -24,28 +24,23 @@
 #include "playing.h"
 #include "HUDui.h"
 
-InputMenu::InputMenu() : keyboardMapMenu(NULL)
+InputMenu::InputMenu() : HUDDialog("Input Settings"), keyboardMapMenu(NULL)
 {
     std::string currentJoystickDevice = BZDB.get("joystickname");
-    // cache font face ID
-    int fontFace = MainMenu::getFontFace();
+
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
 
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setString("Input Settings");
-    listHUD.push_back(label);
-
     keyMapping = new HUDuiLabel;
-    keyMapping->setFontFace(fontFace);
+    keyMapping->setFontFace(menuFont);
     keyMapping->setLabel("Change Key Mapping");
+    keyMapping->setPaddingAfter(true);
     listHUD.push_back(keyMapping);
 
     HUDuiList* option;
 
     activeInput = new HUDuiList;
-    activeInput->setFontFace(fontFace);
+    activeInput->setFontFace(menuFont);
     activeInput->setLabel("Active input device:");
     activeInput->setCallback(callback, "A");
     std::vector<std::string>* options = &activeInput->getList();
@@ -54,12 +49,13 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
     options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Joystick));
     activeInput->update();
+    activeInput->setPaddingAfter(true);
     listHUD.push_back(activeInput);
 
     option = new HUDuiList;
     options = &option->getList();
     // set joystick Device
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Joystick device:");
     option->setCallback(callback, "J");
     options = &option->getList();
@@ -83,7 +79,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
 
     option = new HUDuiList;
     // force feedback
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Force feedback:");
     option->setCallback(callback, "F");
     options = &option->getList();
@@ -97,24 +93,30 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
             option->setIndex(i);
     }
     option->update();
+    option->setHidden(true); // TODO: ACTUALLY MAKE THIS BASED ON THE JOYSTICK OPTION
     listHUD.push_back(option);
 
     option = new HUDuiList;
     // axis settings
     jsx = option;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Joystick X Axis:");
     option->setCallback(callback, "X");
+    option->setHidden(true); // TODO: ACTUALLY MAKE THIS BASED ON THE JOYSTICK OPTION
     listHUD.push_back(option);
+
     option = new HUDuiList;
     jsy = option;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Joystick Y Axis:");
     option->setCallback(callback, "Y");
+    option->setHidden(true); // TODO: ACTUALLY MAKE THIS BASED ON THE JOYSTICK OPTION
     listHUD.push_back(option);
+
     fillJSOptions();
+
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Invert Joystick Axes:");
     option->setCallback(callback, "I");
     options = &option->getList();
@@ -124,11 +126,13 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     options->push_back(std::string("X and Y"));
     option->setIndex(BZDB.evalInt("jsInvertAxes"));
     option->update();
+    option->setPaddingAfter(true);
+    option->setHidden(true); // TODO: ACTUALLY MAKE THIS BASED ON THE JOYSTICK OPTION
     listHUD.push_back(option);
 
     option = new HUDuiList;
     // confine mouse
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Confine mouse:");
     option->setCallback(callback, "G");
     options = &option->getList();
@@ -146,16 +150,17 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
 
     // set maxmotion size
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Mouse Box Size:");
     option->setCallback(callback, "M");
     option->createSlider(22);
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
     option = new HUDuiList;
     // jump while typing on/off
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Jump while typing:");
     option->setCallback(callback, "H");
     options = &option->getList();
@@ -331,7 +336,7 @@ void            InputMenu::resize(int _width, int _height)
     int i;
 
     // use a big font for title, smaller font for the rest
-    const float titleFontSize = (float)_height / 15.0f;
+    /*const float titleFontSize = (float)_height / 15.0f;
     const float fontSize = (float)_height / 45.0f;
     FontManager &fm = FontManager::instance();
 
@@ -339,8 +344,8 @@ void            InputMenu::resize(int _width, int _height)
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -348,7 +353,7 @@ void            InputMenu::resize(int _width, int _height)
     // reposition options
     x = 0.5f * ((float)_width);
     y -= 0.6f * titleHeight;
-    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    const float h = fm.getStrHeight(menuFont, fontSize, " ");
     const int count = listHUD.size();
     for (i = 1; i < count; i++)
     {
@@ -359,9 +364,10 @@ void            InputMenu::resize(int _width, int _height)
             y -= 1.75f * h;
         else
             y -= 1.0f * h;
-    }
+    }*/
 
     // load current settings
+    std::vector<HUDuiControl*>& listHUD = getControls();
     std::vector<std::string> *options = &activeInput->getList();
     for (i = 0; i < (int)options->size(); i++)
     {

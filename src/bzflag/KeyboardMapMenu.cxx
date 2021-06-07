@@ -61,13 +61,14 @@ bool KeyboardMapMenuDefaultKey::keyRelease(const BzfKeyEvent&)
     return true;
 }
 
-KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMenu(NULL)
+KeyboardMapMenu::KeyboardMapMenu() : HUDDialog("Key Mapping"),
+    defaultKey(this), editing(-1), quickKeysMenu(NULL)
 {
+    setSubtitle("Use up/down arrows to navigate, enter key to enter edit mode");
+
     // add controls
     std::vector<HUDuiControl*>& controls = getControls();
 
-    controls.push_back(createLabel("Key Mapping"));
-    controls.push_back(createLabel("Use up/down arrows to navigate, enter key to enter edit mode"));
     controls.push_back(reset = createLabel(NULL, "Reset Defaults"));
     controls.push_back(createLabel("fire", "Fire shot:"));
     controls.push_back(createLabel(NULL, "Drop flag:"));
@@ -246,14 +247,13 @@ void KeyboardMapMenu::resize(int _width, int _height)
     const float bigFontSize = (float)_height / 42.0f;
     const float fontSize = (float)_height / 100.0f;
     FontManager &fm = FontManager::instance();
-    const int fontFace = MainMenu::getFontFace();
 
     // reposition title
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -261,9 +261,9 @@ void KeyboardMapMenu::resize(int _width, int _height)
     // reposition help
     HUDuiLabel* help = (HUDuiLabel*)listHUD[1];
     help->setFontSize(bigFontSize);
-    const float helpWidth = fm.getStrLength(fontFace, bigFontSize, help->getString());
+    const float helpWidth = fm.getStrLength(menuFont, bigFontSize, help->getString());
     x = 0.5f * ((float)_width - helpWidth);
-    y -= 1.1f * fm.getStrHeight(fontFace, bigFontSize, " ");
+    y -= 1.1f * fm.getStrHeight(menuFont, bigFontSize, " ");
     help->setPosition(x, y);
 
     // reposition options in two columns
@@ -271,7 +271,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
     const float topY = y - (0.6f * titleHeight);
     y = topY;
     listHUD[2]->setFontSize(fontSize);
-    const float h = fm.getStrHeight(fontFace, fontSize, " ");
+    const float h = fm.getStrHeight(menuFont, fontSize, " ");
     const int count = listHUD.size() - 2;
     const int mid = (count / 2);
 
@@ -346,15 +346,6 @@ void KeyboardMapMenu::onScanCB(const std::string& name, bool press,
                                const std::string& cmd, void* userData)
 {
     static_cast<KeyboardMapMenu*>(userData)->onScan(name, press, cmd);
-}
-
-HUDuiLabel* KeyboardMapMenu::createLabel(const char* str, const char* _label)
-{
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
-    if (str) label->setString(str);
-    if (_label) label->setLabel(_label);
-    return label;
 }
 
 // Local Variables: ***

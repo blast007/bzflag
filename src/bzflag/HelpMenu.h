@@ -39,7 +39,7 @@ public:
 class HelpMenu : public HUDDialog
 {
 public:
-    HelpMenu(const char* title = "Help");
+    HelpMenu(const char* title = "Help", HUDDialogLayout layout = HUDDialogDoubleColumn);
     ~HelpMenu()
     {
     }
@@ -57,8 +57,6 @@ public:
     static void done();
 
 protected:
-    HUDuiControl* createLabel(const char* string,
-                              const char* label = NULL);
     virtual float getLeftSide(int width, int height);
 
 private:

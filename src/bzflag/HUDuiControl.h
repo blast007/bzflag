@@ -52,6 +52,8 @@ public:
     HUDuiControl*   getNext() const;
     HUDuiCallback   getCallback() const;
     const void*     getUserData() const;
+    bool        hasPaddingAfter() const;
+    bool        isHidden() const;
 
     void        setPosition(float x, float y);
     void        setSize(float width, float height);
@@ -62,6 +64,8 @@ public:
     void        setPrev(HUDuiControl*);
     void        setNext(HUDuiControl*);
     void        setCallback(HUDuiCallback, const void*);
+    void        setPaddingAfter(bool hasPadding);
+    void        setHidden(bool hide);
 
     bool        hasFocus() const;
     void        setFocus();
@@ -101,6 +105,8 @@ private:
     HUDuiControl*   prev, *next;
     HUDuiCallback   cb;
     const void*     userData;
+    bool        paddingAfter;
+    bool        hidden;
     static OpenGLGState* gstate;
     static int    arrow;
     static int      arrowFrame;

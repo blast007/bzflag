@@ -41,7 +41,8 @@
 #undef AUTOUPGRADE
 #endif
 
-NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::string date) :
+// TODO: Update this to have a title or remote this menu completely
+NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::string date) : HUDDialog(""),
     cURLManager(), byteTransferred(0)
 {
     // prep for possible download
@@ -56,60 +57,59 @@ NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::strin
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* label;
-    int fontFace = MainMenu::getFontFace();
 
     status = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("");
     listHUD.push_back(status);
 
     label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString(announce);
     listHUD.push_back(label);
 
     label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("A new version of BZFlag has been released!");
     listHUD.push_back(label);
 
     label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString(date);
     listHUD.push_back(label);
 
 #ifdef AUTOUPGRADE
     label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("Would you like to upgrade now?");
     listHUD.push_back(label);
 
     label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("(Download and install: " + url + ")");
     listHUD.push_back(label);
 
     yes = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("Yes!");
     listHUD.push_back(label);
 
     no = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("Not yet");
     listHUD.push_back(label);
 
     initNavigation(listHUD, 6, 7);
 #else
     label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("Please upgrade as soon as possible.");
     listHUD.push_back(label);
 
     yes = NULL;
 
     no = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
+    label->setFontFace(menuFont);
     label->setString("OK");
     listHUD.push_back(label);
 
@@ -206,11 +206,10 @@ void NewVersionMenu::resize(int _width, int _height)
     float smallFontSize = (float)_height / 45.0f;
     float x, y;
     FontManager &fm = FontManager::instance();
-    const int fontFace = MainMenu::getFontFace();
 
     // heights
-    const float fontHeight = fm.getStrHeight(fontFace, fontSize, " ");
-    const float smallFontHeight = fm.getStrHeight(fontFace, smallFontSize, " ");
+    const float fontHeight = fm.getStrHeight(menuFont, fontSize, " ");
+    const float smallFontHeight = fm.getStrHeight(menuFont, smallFontSize, " ");
 
     // get stuff
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -219,7 +218,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // status
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
     label->setFontSize(smallFontSize);
-    float labelWidth = fm.getStrLength(fontFace, smallFontSize, "Downloading update: 8888/8888 KB");
+    float labelWidth = fm.getStrLength(menuFont, smallFontSize, "Downloading update: 8888/8888 KB");
     x = 0.5f * ((float)_width - labelWidth);
     y = 2.0f * fontHeight;
     label->setPosition(x, y);
@@ -227,7 +226,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // announcement
     label = (HUDuiLabel*)listHUD[++i];
     label->setFontSize(fontSize);
-    labelWidth = fm.getStrLength(fontFace, fontSize, label->getString());
+    labelWidth = fm.getStrLength(menuFont, fontSize, label->getString());
     x = 0.5f * ((float)_width - labelWidth);
     y = (float)_height - fontHeight - 1.5f * smallFontHeight;
     label->setPosition(x, y);
@@ -235,7 +234,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // release-notice
     label = (HUDuiLabel*)listHUD[++i];
     label->setFontSize(smallFontSize);
-    labelWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
+    labelWidth = fm.getStrLength(menuFont, smallFontSize, label->getString());
     x = 0.5f * ((float)_width - labelWidth);
     y -= 3.0f * smallFontHeight;
     label->setPosition(x, y);
@@ -243,7 +242,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // release-date
     label = (HUDuiLabel*)listHUD[++i];
     label->setFontSize(smallFontSize);
-    labelWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
+    labelWidth = fm.getStrLength(menuFont, smallFontSize, label->getString());
     x = 0.5f * ((float)_width - labelWidth);
     y -= 1.5f * smallFontHeight;
     label->setPosition(x, y);
@@ -251,7 +250,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // user request
     label = (HUDuiLabel*)listHUD[++i];
     label->setFontSize(smallFontSize);
-    labelWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
+    labelWidth = fm.getStrLength(menuFont, smallFontSize, label->getString());
     x = 0.5f * ((float)_width - labelWidth);
     y -= 4.5f * smallFontHeight;
     label->setPosition(x, y);
@@ -260,7 +259,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // download details
     label = (HUDuiLabel*)listHUD[++i];
     label->setFontSize(smallFontSize);
-    labelWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
+    labelWidth = fm.getStrLength(menuFont, smallFontSize, label->getString());
     x = 0.5f * ((float)_width - labelWidth);
     y -= 1.5f * smallFontHeight;
     label->setPosition(x, y);
@@ -269,7 +268,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // first user option
     label = (HUDuiLabel*)listHUD[++i];
     label->setFontSize(smallFontSize);
-    labelWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
+    labelWidth = fm.getStrLength(menuFont, smallFontSize, label->getString());
     x = 0.5f * ((float)_width - labelWidth);
     y -= 1.0f * fontHeight;
     label->setPosition(x, y);
@@ -278,7 +277,7 @@ void NewVersionMenu::resize(int _width, int _height)
     // second user option
     label = (HUDuiLabel*)listHUD[++i];
     label->setFontSize(smallFontSize);
-    labelWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
+    labelWidth = fm.getStrLength(menuFont, smallFontSize, label->getString());
     y -= 1.5f * smallFontHeight;
     label->setPosition(x, y);
 #endif

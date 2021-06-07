@@ -39,19 +39,19 @@ bool QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 }
 
 
-QuitMenu::QuitMenu()
+QuitMenu::QuitMenu() : HUDDialog("Quit Game")
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* label;
 
     label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
+    label->setFontFace(menuFont);
     label->setString("Enter to quit, Esc to resume");
     listHUD.push_back(label);
 
     label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
+    label->setFontFace(menuFont);
     label->setString("Really quit?");
     listHUD.push_back(label);
 
@@ -71,11 +71,10 @@ void QuitMenu::resize(int _width, int _height)
     float smallFontSize = (float)_height / 54.0f;
     float x, y;
     FontManager &fm = FontManager::instance();
-    const int fontFace = MainMenu::getFontFace();
 
     // heights
-    const float fontHeight = fm.getStrHeight(fontFace, fontSize, " ");
-    const float smallFontHeight = fm.getStrHeight(fontFace, smallFontSize, " ");
+    const float fontHeight = fm.getStrHeight(menuFont, fontSize, " ");
+    const float smallFontHeight = fm.getStrHeight(menuFont, smallFontSize, " ");
 
     // get stuff
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -83,7 +82,7 @@ void QuitMenu::resize(int _width, int _height)
 
     // help message
     label->setFontSize(smallFontSize);
-    const float stringWidth = fm.getStrLength(fontFace, smallFontSize, label->getString());
+    const float stringWidth = fm.getStrLength(menuFont, smallFontSize, label->getString());
     x = 0.5f * ((float)_width - stringWidth);
     y = (float)_height - fontHeight - 1.5f * smallFontHeight;
     label->setPosition(x, y);
@@ -91,7 +90,7 @@ void QuitMenu::resize(int _width, int _height)
     // quit message
     label = (HUDuiLabel*)listHUD[1];
     label->setFontSize(fontSize);
-    const float labelWidth = fm.getStrLength(fontFace, fontSize, label->getString());
+    const float labelWidth = fm.getStrLength(menuFont, fontSize, label->getString());
     x = 0.5f * ((float)_width - labelWidth);
     y = (float)_height - 3.5f * fontHeight;
     label->setPosition(x, y);

@@ -54,15 +54,12 @@
 
 char ServerStartMenu::settings[] = "bfaaaaabaaaaa";
 
-ServerStartMenu::ServerStartMenu()
+ServerStartMenu::ServerStartMenu() : HUDDialog("Start Server")
 {
     // add controls
     std::vector<HUDuiControl*>& controls = getControls();
     HUDuiList* listHUD;
     std::vector<std::string>* items;
-
-    // 0
-    controls.push_back(createLabel("Start Server"));
 
     // 1
     listHUD = createList("Style:");
@@ -633,8 +630,8 @@ void ServerStartMenu::resize(int _width, int _height)
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(title->getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(title->getFontFace(), titleFontSize, " ");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, " ");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -642,7 +639,7 @@ void ServerStartMenu::resize(int _width, int _height)
     // reposition options
     x = 0.5f * (float)_width;
     y -= 0.6f * titleHeight;
-    const float h = fm.getStrHeight(listHUD[1]->getFontFace(), fontSize, " ");
+    const float h = fm.getStrHeight(menuFont, fontSize, " ");
     const int count = listHUD.size();
     for (int i = 1; i < count; i++)
     {
@@ -664,17 +661,9 @@ void ServerStartMenu::resize(int _width, int _height)
 HUDuiList* ServerStartMenu::createList(const char* str)
 {
     HUDuiList* listHUD = new HUDuiList;
-    listHUD->setFontFace(MainMenu::getFontFace());
+    listHUD->setFontFace(menuFont);
     if (str) listHUD->setLabel(str);
     return listHUD;
-}
-
-HUDuiLabel* ServerStartMenu::createLabel(const char* str)
-{
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(MainMenu::getFontFace());
-    if (str) label->setString(str);
-    return label;
 }
 
 

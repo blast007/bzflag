@@ -36,12 +36,7 @@ public:
     void resize(int width, int height);
     void createControls();
 
-    static int getFontFace();
-
 private:
-
-    HUDuiControl* createLabel(const char* string);
-
     HUDuiControl* join;
     HUDuiControl* options;
     HUDuiControl* help;

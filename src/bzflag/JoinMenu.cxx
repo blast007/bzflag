@@ -34,32 +34,24 @@
 JoinMenu* JoinMenu::activeMenu = NULL;
 
 
-JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
+JoinMenu::JoinMenu() : HUDDialog("Join Game"), serverStartMenu(NULL), serverMenu(NULL)
 {
-    // cache font face ID
-    int fontFace = MainMenu::getFontFace();
-
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
     StartupInfo* info = getStartupInfo();
 
-    HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setString("Join Game");
-    listHUD.push_back(label);
-
     findServer = new HUDuiLabel;
-    findServer->setFontFace(fontFace);
+    findServer->setFontFace(menuFont);
     findServer->setString("Find Server");
     listHUD.push_back(findServer);
 
     connectLabel = new HUDuiLabel;
-    connectLabel->setFontFace(fontFace);
+    connectLabel->setFontFace(menuFont);
     connectLabel->setString("Connect");
     listHUD.push_back(connectLabel);
 
     callsign = new HUDuiTypeIn;
-    callsign->setFontFace(fontFace);
+    callsign->setFontFace(menuFont);
     callsign->setLabel("Callsign:");
     callsign->setMaxLength(CallSignLen - 1);
     callsign->setString(info->callsign);
@@ -67,14 +59,14 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
 
     password = new HUDuiTypeIn;
     password->setObfuscation(true);
-    password->setFontFace(fontFace);
+    password->setFontFace(menuFont);
     password->setLabel("Password:");
     password->setMaxLength(CallSignLen - 1);
     password->setString(info->password);
     listHUD.push_back(password);
 
     team = new HUDuiList;
-    team->setFontFace(fontFace);
+    team->setFontFace(menuFont);
     team->setLabel("Team:");
     team->setCallback(teamCallback, this);
     std::vector<std::string>& teams = team->getList();
@@ -91,13 +83,13 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
     listHUD.push_back(team);
 
     teamIcon = new HUDuiTextureLabel;
-    teamIcon->setFontFace(fontFace);
+    teamIcon->setFontFace(menuFont);
     teamIcon->setString(" ");
     updateTeamTexture();
     listHUD.push_back(teamIcon);
 
     skin = new HUDuiList;
-    skin->setFontFace(fontFace);
+    skin->setFontFace(menuFont);
     skin->setLabel("Skin:");
     skin->setCallback(skinCallback, this);
     std::vector<std::string>& skins = skin->getList();
@@ -112,7 +104,7 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
     listHUD.push_back(skin);
 
     server = new HUDuiTypeIn;
-    server->setFontFace(fontFace);
+    server->setFontFace(menuFont);
     server->setLabel("Server:");
     server->setMaxLength(64);
     server->setString(info->serverName);
@@ -121,31 +113,31 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
     char buffer[10];
     sprintf(buffer, "%d", info->serverPort);
     port = new HUDuiTypeIn;
-    port->setFontFace(fontFace);
+    port->setFontFace(menuFont);
     port->setLabel("Port:");
     port->setMaxLength(5);
     port->setString(buffer);
     listHUD.push_back(port);
 
     motto = new HUDuiTypeIn;
-    motto->setFontFace(fontFace);
+    motto->setFontFace(menuFont);
     motto->setLabel("Motto:");
     motto->setMaxLength(MottoLen - 1);
     motto->setString(info->motto);
     listHUD.push_back(motto);
 
     startServer = new HUDuiLabel;
-    startServer->setFontFace(fontFace);
+    startServer->setFontFace(menuFont);
     startServer->setString("Start Server");
     listHUD.push_back(startServer);
 
     status = new HUDuiLabel;
-    status->setFontFace(fontFace);
+    status->setFontFace(menuFont);
     status->setString("");
     listHUD.push_back(status);
 
     failedMessage = new HUDuiLabel;
-    failedMessage->setFontFace(fontFace);
+    failedMessage->setFontFace(menuFont);
     failedMessage->setString("");
     listHUD.push_back(failedMessage);
 
@@ -276,7 +268,7 @@ void JoinMenu::execute()
 void JoinMenu::centerLabelHorizontally(HUDuiLabel *label)
 {
     FontManager &fm = FontManager::instance();
-    const float _width = fm.getStrLength(MainMenu::getFontFace(),
+    const float _width = fm.getStrLength(menuFont,
                                          label->getFontSize(), label->getString());
 
     label->setPosition(center - 0.5f * _width, label->getY());
@@ -366,8 +358,8 @@ void JoinMenu::resize(int _width, int _height)
     std::vector<HUDuiControl*>& listHUD = getControls();
     HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
     title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, "");
+    const float titleWidth = fm.getStrLength(menuFont, titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(menuFont, titleFontSize, "");
     float x = 0.5f * ((float)_width - titleWidth);
     float y = (float)_height - titleHeight;
     title->setPosition(x, y);
@@ -376,7 +368,7 @@ void JoinMenu::resize(int _width, int _height)
     x = 0.5f * ((float)_width - 0.5f * titleWidth);
     y -= 0.6f * titleHeight;
     listHUD[1]->setFontSize(fontSize);
-    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, "");
+    const float h = fm.getStrHeight(menuFont, fontSize, "");
     const int count = listHUD.size();
     for (int i = 1; i < count; i++)
     {

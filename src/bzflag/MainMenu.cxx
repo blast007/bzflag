@@ -28,7 +28,7 @@
 #include "playing.h"
 #include "HUDui.h"
 
-MainMenu::MainMenu() : HUDDialog(),
+MainMenu::MainMenu() : HUDDialog("BZFlag", HUDDialogSingleColumn),
     join(), options(), help(), leave(), quit(),
     joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
@@ -38,7 +38,7 @@ void      MainMenu::createControls()
 {
     TextureManager &tm = TextureManager::instance();
     std::vector<HUDuiControl*>& listHUD = getControls();
-    HUDuiControl* label;
+    //HUDuiControl* label;
     HUDuiTextureLabel* textureLabel;
 
     // clear controls
@@ -51,13 +51,12 @@ void      MainMenu::createControls()
 
     // add controls
     textureLabel = new HUDuiTextureLabel;
-    textureLabel->setFontFace(getFontFace());
+    textureLabel->setFontFace(menuFont);
     textureLabel->setTexture(title);
     textureLabel->setString("BZFlag");
     listHUD.push_back(textureLabel);
 
-    label = createLabel("Up/Down arrows to move, Enter to select, Esc to dismiss");
-    listHUD.push_back(label);
+    setSubtitle("Up/Down arrows to move, Enter to select, Esc to dismiss");
 
     join = createLabel("Join Game");
     listHUD.push_back(join);
@@ -87,14 +86,6 @@ void      MainMenu::createControls()
     listHUD[2]->setFocus();
 }
 
-HUDuiControl* MainMenu::createLabel(const char* string)
-{
-    HUDuiLabel* control = new HUDuiLabel;
-    control->setFontFace(getFontFace());
-    control->setString(string);
-    return control;
-}
-
 MainMenu::~MainMenu()
 {
     // clear controls
@@ -108,12 +99,6 @@ MainMenu::~MainMenu()
     delete optionsMenu;
     delete quitMenu;
     HelpMenu::done();
-}
-
-int         MainMenu::getFontFace()
-{
-    // create font
-    return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));
 }
 
 HUDuiDefaultKey*    MainMenu::getDefaultKey()
@@ -158,7 +143,6 @@ void            MainMenu::resize(int _width, int _height)
     const float tinyFontSize = (float)_height / 54.0f;
     const float fontSize = (float)_height / 22.0f;
     FontManager &fm = FontManager::instance();
-    int fontFace = getFontFace();
 
     // reposition title
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -176,14 +160,14 @@ void            MainMenu::resize(int _width, int _height)
     // reposition instructions
     HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
     hint->setFontSize(tinyFontSize);
-    const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
-    y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
+    const float hintWidth = fm.getStrLength(menuFont, tinyFontSize, hint->getString());
+    y -= 1.25f * fm.getStrHeight(menuFont, tinyFontSize, hint->getString());
     hint->setPosition(0.5f * ((float)_width - hintWidth), y);
-    y -= 2.0f * fm.getStrHeight(fontFace, fontSize, hint->getString());
+    y -= 2.0f * fm.getStrHeight(menuFont, fontSize, hint->getString());
 
     // reposition menu items (first is centered, rest aligned to the first)
     const float firstWidth
-        = fm.getStrLength(fontFace, fontSize,
+        = fm.getStrLength(menuFont, fontSize,
                           ((HUDuiLabel*)listHUD[2])->getString());
     x = 0.5f * ((float)_width - firstWidth);
     const int count = listHUD.size();
@@ -192,7 +176,7 @@ void            MainMenu::resize(int _width, int _height)
         HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
         label->setFontSize(fontSize);
         label->setPosition(x, y);
-        y -= 1.3f * fm.getStrHeight(fontFace, fontSize, label->getString());
+        y -= 1.3f * fm.getStrHeight(menuFont, fontSize, label->getString());
     }
 }
 

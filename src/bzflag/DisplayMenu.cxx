@@ -28,23 +28,17 @@
 #include "playing.h"
 #include "HUDui.h"
 
-DisplayMenu::DisplayMenu() : formatMenu(NULL)
+DisplayMenu::DisplayMenu() : HUDDialog("Display Settings"), formatMenu(NULL)
 {
     // add controls
     std::vector<std::string>* options;
     std::vector<HUDuiControl*>& listHUD  = getControls();
     HUDuiList* option;
 
-    // cache font face id
-    int fontFace = MainMenu::getFontFace();
-
     HUDuiLabel* label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setString("Display Settings");
-    listHUD.push_back(label);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Quality:");
     option->setCallback(callback, "6");
     options = &option->getList();
@@ -56,7 +50,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Texturing:");
     option->setCallback(callback, "5");
     options = &option->getList();
@@ -71,7 +65,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Lighting:");
     option->setCallback(callback, "4");
     options = &option->getList();
@@ -82,7 +76,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Shadows:");
     option->setCallback(callback, "7");
     options = &option->getList();
@@ -90,13 +84,14 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Stipple"));
     options->push_back(std::string("Stencil"));
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
 
     if (OpenGLGState::getMaxSamples() > 1)
     {
         option = new HUDuiList;
-        option->setFontFace(fontFace);
+        option->setFontFace(menuFont);
         option->setLabel("Anti Aliasing:");
         option->setCallback(callback, "m");
         options = &option->getList();
@@ -118,7 +113,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
         if (maxAnisotropy > 1)
         {
             option = new HUDuiList;
-            option->setFontFace(fontFace);
+            option->setFontFace(menuFont);
             option->setLabel("Anisotropic:");
             option->setCallback(callback, "A");
             options = &option->getList();
@@ -135,25 +130,27 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     }
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("AntiFlicker:");
     option->setCallback(callback, "R");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
 
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Smoothing:");
     option->setCallback(callback, "3");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
 
@@ -161,16 +158,17 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     if (((BzfWindow*)getMainWindow()->getWindow())->hasGammaControl())
     {
         option = new HUDuiList;
-        option->setFontFace(fontFace);
+        option->setFontFace(menuFont);
         option->setLabel("Brightness:");
         option->setCallback(callback, "g");
+        option->setPaddingAfter(true);
         option->createSlider(15);
         option->update();
         listHUD.push_back(option);
     }
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
 
 #if (defined(HAVE_SDL) && !defined(HAVE_SDL2))  // only SDL 2 can make live changes
     option->setLabel("(restart required) Energy Saver:");
@@ -184,13 +182,14 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     if (getMainWindow()->getWindow()->hasVerticalSync())
         options->push_back(std::string("Vertical Sync"));
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 
 
 
 #if defined(DEBUG_RENDERING)
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Wireframe:");
     option->setCallback(callback, "b");
     options = &option->getList();
@@ -201,7 +200,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Depth Complexity:");
     option->setCallback(callback, "c");
     options = &option->getList();
@@ -211,7 +210,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Culling Tree:");
     option->setCallback(callback, "d");
     options = &option->getList();
@@ -221,13 +220,14 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(option);
 
     option = new HUDuiList;
-    option->setFontFace(fontFace);
+    option->setFontFace(menuFont);
     option->setLabel("Collision Tree:");
     option->setCallback(callback, "e");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
     option->update();
+    option->setPaddingAfter(true);
     listHUD.push_back(option);
 #endif
 
@@ -240,7 +240,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     else
     {
         videoFormat = label = new HUDuiLabel;
-        label->setFontFace(fontFace);
+        label->setFontFace(menuFont);
         label->setLabel("Change Video Format");
         listHUD.push_back(label);
     }
@@ -267,46 +267,11 @@ void            DisplayMenu::execute()
 void            DisplayMenu::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
-    int i;
 
-    // use a big font for title, smaller font for the rest
-    const float titleFontSize = (float)_height / 15.0f;
-#if defined(DEBUG_RENDERING)
-    const float fontSize = (float)_height / 55.0f;
-#else
-    const float fontSize = (float)_height / 40.0f;
-#endif
-
-    FontManager &fm = FontManager::instance();
-    int fontFace = MainMenu::getFontFace();
-
-    // reposition title
+    // Get controls
     std::vector<HUDuiControl*>& listHUD = getControls();
-    HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
-    title->setFontSize(titleFontSize);
-    const float titleWidth = fm.getStrLength(fontFace, titleFontSize, title->getString());
-    const float titleHeight = fm.getStrHeight(fontFace, titleFontSize, " ");
-    float x = 0.5f * ((float)_width - titleWidth);
-    float y = (float)_height - titleHeight;
-    title->setPosition(x, y);
 
-    // reposition options
-    x = 0.5f * ((float)_width);
-    y -= 0.6f * titleHeight;
-    const float h = fm.getStrHeight(fontFace, fontSize, " ");
-    const int count = listHUD.size();
-    for (i = 1; i < count; i++)
-    {
-        listHUD[i]->setFontSize(fontSize);
-        listHUD[i]->setPosition(x, y);
-        // Add extra space after Shadows, AntiFlicker, Smoothing, Brightness, Energy Saver and before Change Video Format
-        if (i == 4 || i == 7 || i == 8 || i == 9 || i == count - 2)
-            y -= 1.75f * h;
-        else
-            y -= 1.0f * h;
-    }
-
-    i = 1;
+    int i = 1;
     // load current settings
     SceneRenderer* renderer = getSceneRenderer();
     if (renderer)

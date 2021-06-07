@@ -48,7 +48,9 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
     desiredLabelWidth(0.0f),
     trueLabelWidth(0.0f),
     prev(this), next(this),
-    cb(NULL), userData(NULL)
+    cb(NULL), userData(NULL),
+    paddingAfter(false),
+    hidden(false)
 {
     if (totalCount == 0)
     {
@@ -122,6 +124,16 @@ const void*     HUDuiControl::getUserData() const
     return userData;
 }
 
+bool                HUDuiControl::hasPaddingAfter() const
+{
+    return paddingAfter;
+}
+
+bool                HUDuiControl::isHidden() const
+{
+    return hidden;
+}
+
 void            HUDuiControl::setPosition(float _x, float _y)
 {
     x = _x;
@@ -178,6 +190,16 @@ void            HUDuiControl::setCallback(HUDuiCallback _cb, const void* _ud)
 {
     cb = _cb;
     userData = _ud;
+}
+
+void            HUDuiControl::setPaddingAfter(bool hasPadding)
+{
+    paddingAfter = hasPadding;
+}
+
+void            HUDuiControl::setHidden(bool hide)
+{
+    hidden = hide;
 }
 
 void            HUDuiControl::onSetFont()
@@ -292,6 +314,7 @@ void            HUDuiControl::renderLabel()
 
 void            HUDuiControl::render()
 {
+    if (hidden) return;
     if (hasFocus() && showingFocus) renderFocus();
     glColor3fv(hasFocus() ? textColor : dimTextColor);
     renderLabel();
