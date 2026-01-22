@@ -226,7 +226,7 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\bin_Release_${PLATFORM}\libcurl.dll
-  File ..\..\..\bin_Release_${PLATFORM}\zlib1.dll
+  File ..\..\..\bin_Release_${PLATFORM}\zlib.dll
   File ..\..\..\bin_Release_${PLATFORM}\cares.dll
   File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 

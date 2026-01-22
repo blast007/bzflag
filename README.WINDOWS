@@ -2,34 +2,29 @@ README for Windows (32- and 64-bit) platforms
 ---------------------------------------------
 
 **Compilers**
-BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
-files are provided for it. The current compiler used is Visual C++ 2017 (VC15).
-You can download Visual Studio Community 2017 for free from here:
-https://aka.ms/vs/15/release/vs_community.exe
+BZFlag uses Microsoft Visual C++ 2017 for its prebuilt binary releases, and
+project files are provided for it. The solution files are located inside of
+the MSVC directory. You can download Visual Studio Community 2017 for free:
+  https://aka.ms/vs/15/release/vs_community.exe
 
 **Targets**
 There are a total of 4 build targets in the VC projects. There are targets
-for Release and Debug, and each has a 32-bit and 64-bit version. At this time,
-only 32-bit is supported. Our dependencies don't build correctly on 64-bit with
-our current script. Also, there's no real performance advantage in having a
-64-bit BZFlag client as the game doesn't use much RAM.
+for Release and Debug, and each has a 32-bit (Win32) and 64-bit (x64) version.
+Only Win32 is actively supported as x64 compilation was only recently made
+possible. The x64 compilation does emit some warnings, so it will fail to
+compile in Debug mode until those are resolved.
 
-**Required Libraries**
-Various third-party libraries are needed, which are packaged in our
-bzflag-dependencies repository. Either grab a pre-built binary package from
-the releases section, or build the dependencies from source as described at
-the repository. The BZFlag build expects that the dependencies are located at
-the root of the bzflag source directory, such that libraries and headers are in
-<bzflag source>/dependencies/windows-<configuration>-<architecture>.
-  https://github.com/BZFlag-Dev/bzflag-dependencies
+**Required Dependencies**
+Several third-party dependencies are required to compile BZFlag. We have a
+CMake build process located in the dependencies directory to download and
+compile all of these. You will need to install CMake from:
+  https://cmake.org/download/
 
-NSIS is needed to build an installer, which is built as part of a release
-build.
-  http://nsis.sourceforge.net/
+After CMake is installed, run buildVC2017.bat in the dependencies directory.
 
 **Running and Debugging**
 By default the compiler will copy the compiled executables to the root level
-of the source drive ( the same place that the data dir is at). From there
+of the source drive (the same place that the data dir is at). From there
 you can simply double click the application to run it. If you wish to debug
 the program, you must set the debug executable path and working directory
 inside VC to use this executable and path.
@@ -37,4 +32,6 @@ inside VC to use this executable and path.
 **Installer**
 If you wish to build the full release package using the fullbuild solution,
 you will need to have NSIS installed. The built installer will be placed in
-the bin_Release folder for the target in the root of the source tree.
+the bin_Release folder for the target in the root of the source tree. Install
+NSIS from:
+  http://nsis.sourceforge.net/
